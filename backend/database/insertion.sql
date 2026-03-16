@@ -24,7 +24,15 @@ INSERT INTO products (name, description, price, category_id, brand_id, gender) V
 ('Chaussure de tennis Adizero Ubersonic '135,3,5,'Homme'),
 ('Short de tennis Climacool Club '35,2,3'Homme'),
 ('CHAUSSURE DE TENNIS GAMECOURT 2'95,3,5'Homme'),
-('Sac Wilson Super Tour Pro Staff 9R','Le sac de tennis Wilson Super Tour Pro Staff permet de transporter jusque 9 raquettes, et son compartiment thermoguard assure une protection des raquettes contre les températures extrêmes.',89.99,5,1,'unisex'),
+('Sac Wilson Super Tour Pro Staff 9R','Le sac de tennis Wilson Super Tour Pro Staff permet de transporter jusque 9 raquettes.',89.99,5,1,'unisex'),
+('Short Tennis Ultra Dry stretch Lacoste',"Ce short offre liberté de mouvement et maintien au sec pendant l'effort grâce à son tissu stretch, une taille ajourée et la technologie Ultra Dry.",90.00,2,3,'homme'),
+('Béret en Petit Piqué crocodile brodé Lacoste',' Conçu en petit piqué de coton iconique, il est souligné par un petit crocodile vert brodé sur le côté et des finitions soignées.',80.00,4,3,'unisex'),
+('Raquette Evo Drive Gen2 Cordée',"Ce modèle a été conçu pour vous procurer le meilleur confort à la frappe et s'adresse aux joueurs qui veulent développer la puissance de leurs coups en gardant la maîtrise de la trajectoire de balle.",179.95,1,2,'unisex'),
+('Chaussures SFX 4 Clay Women','Avec son fit large et l’extension du talon, elle offre un confort particulièrement moelleux tout en assurant de la stabilité sur chaque appui.',120.00,3,2,'femme'),
+('Pantalon de tennis Walk On Adidas',"Léger, doux et doté d'une doublure respirante, ce pantalon de tennis adidas t'offre un maximum de style et de confort.",75.00,2,5,'homme'),
+('Chaussettes mi-mollet de tennis Adidas','Conçues pour toutes les personnes qui visent la performance, cette paire de chaussettes de tennis mi-mollet rembourrées est parfaite pour s’offrir un confort au top.',18.00,4,5,'unisex'),
+('Serre-poignets de tennis Nike Premier','Les serre-poignets de tennis Nike Premier sont fabriqués avec un matériau absorbant extensible pour évacuer la transpiration pendant que vous jouez.',14.99,4,4,'unisex'),
+('Pantalon de tennis taille mi-haute Dri-FIT pour femme Nike Advantage',"Prêt pour affronter les micros dans la tente de presse, ce pantalon réinvente les échauffements classiques pour les meilleures joueuses de tennis d'aujourd'hui.",74.99,2,4,'femme');
 
 
 INSERT INTO sizes (label) VALUES 
