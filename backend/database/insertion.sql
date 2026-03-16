@@ -24,7 +24,7 @@ INSERT INTO products (name, description, price, category_id, brand_id, gender) V
 ('Chaussure de tennis Adizero Ubersonic '135,3,5,'Homme'),
 ('Short de tennis Climacool Club '35,2,3'Homme'),
 ('CHAUSSURE DE TENNIS GAMECOURT 2'95,3,5'Homme'),
-('Sac Wilson Super Tour Pro Staff 9R','Le sac de tennis Wilson Super Tour Pro Staff permet de transporter jusque 9 raquettes, et son compartiment thermoguard assure une protection des raquettes contre les températures extrêmes.',89.99,5,1,'unisex');
+('Sac Wilson Super Tour Pro Staff 9R','Le sac de tennis Wilson Super Tour Pro Staff permet de transporter jusque 9 raquettes, et son compartiment thermoguard assure une protection des raquettes contre les températures extrêmes.',89.99,5,1,'unisex'),
 
 
 INSERT INTO sizes (label) VALUES 
