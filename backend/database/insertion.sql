@@ -19,7 +19,8 @@ INSERT INTO products (name, description, price, category_id, brand_id, gender) V
 ('Hoodie Nike Court Heritage','Hoodie de tennis confortable pour hommes',100.00,2,4,'homme'),
 ('Short Nike Court Victory',"Prêt pour l'entraînement, prêt pour le jeu : ce short respirant vous garde au sec sur et en dehors du court.",59.99,2,4,'homme'),
 ('Sac Nike Gym Club retro Off-White','Sac de voyage Old School idéal pour les entrainements',45.00,5,4,'unisex'),
-('Sac Wilson Super Tour Pro Staff 9R','Le sac de tennis Wilson Super Tour Pro Staff permet de transporter jusque 9 raquettes, et son compartiment thermoguard assure une protection des raquettes contre les températures extrêmes.',89.99,5,1,'unisex');
+('Sac Wilson Super Tour Pro Staff 9R','Le sac de tennis Wilson Super Tour Pro Staff permet de transporter jusque 9 raquettes, et son compartiment thermoguard assure une protection des raquettes contre les températures extrêmes.',89.99,5,1,'unisex'),
+
 
 
 INSERT INTO sizes (label) VALUES 
