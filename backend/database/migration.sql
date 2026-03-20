@@ -14,30 +14,35 @@ CREATE TABLE users (
 );
 
 CREATE TABLE categories (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    description TEXT
-);
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 
 CREATE TABLE brands (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL
-);
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100)
+) ENGINE=InnoDB;
+
+
 
 CREATE TABLE products (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     description TEXT,
     price DECIMAL(10,2) NOT NULL,
     category_id INT,
     brand_id INT,
-    color_id INT,
     gender ENUM('homme','femme','unisex'),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES categories(id),
-    FOREIGN KEY (brand_id) REFERENCES brands(id),
-    FOREIGN KEY (color_id) REFERENCES colors(id)
-);
+
+    INDEX (category_id),
+    INDEX (brand_id),
+
+    CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories(id),
+    CONSTRAINT fk_brand FOREIGN KEY (brand_id) REFERENCES brands(id)
+) ENGINE=InnoDB;
 
 CREATE TABLE sizes (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -45,18 +50,22 @@ CREATE TABLE sizes (
 );
 
 CREATE TABLE colors (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE product_variants (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    product_id INT,
-    size_id INT,
-    color_id INT,
-    stock INT DEFAULT 0,
-    sku VARCHAR(100),
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    size_id INT NULL,
+    color_id INT NOT NULL,
+    stock INT DEFAULT 10,
+
+    INDEX (product_id),
+    INDEX (size_id),
+    INDEX (color_id),
+
     FOREIGN KEY (product_id) REFERENCES products(id),
     FOREIGN KEY (size_id) REFERENCES sizes(id),
     FOREIGN KEY (color_id) REFERENCES colors(id)
-);
+) ENGINE=InnoDB;

@@ -12,28 +12,47 @@ INSERT INTO brands (name) VALUES
 ('Nike'),
 ('Adidas');
 
-INSERT INTO products (name, description, price, category_id, brand_id, gender) VALUES 
-('Raquette de Tennis Shift 99 Pro V1','Cette raquette révolutionnaire intègre des technologies modernes pour créer des effets importants avec un confort inégalé.',199.99,1,1,'unisex'),
-('Raquette de Tennis Pro Staff X v14','Idéale pour les joueurs qui apprécient les sensations classiques des raquettes Pro Staff mais qui recherchent une raquette plus tolérante et facile à manier.',229.99,1,1,'unisex'),
-('Chaussures Nike Vapor Pro 3','Chaussure de tennis surface dure pour hommes',129.99,3,4,'homme'),
-('Hoodie Nike Court Heritage','Hoodie de tennis confortable pour hommes',100.00,2,4,'homme'),
-('Short Nike Court Victory',"Prêt pour l'entraînement, prêt pour le jeu : ce short respirant vous garde au sec sur et en dehors du court.",59.99,2,4,'homme'),
-('Sac Nike Gym Club retro Off-White','Sac de voyage Old School idéal pour les entrainements',45.00,5,4,'unisex'),
-('Gold Academy x3','Balles de tennis' ,6.99,4,2,'unisex'),
-('Survêtement ,Lacoste Tennis x Daniil Medvedev '260,00,2,3,'Homme'),
-('Chaussure de tennis Adizero Ubersonic '135,3,5,'Homme'),
-('Short de tennis Climacool Club '35,2,3'Homme'),
-('CHAUSSURE DE TENNIS GAMECOURT 2'95,3,5'Homme'),
-('Sac Wilson Super Tour Pro Staff 9R','Le sac de tennis Wilson Super Tour Pro Staff permet de transporter jusque 9 raquettes.',89.99,5,1,'unisex'),
-('Short Tennis Ultra Dry stretch Lacoste',"Ce short offre liberté de mouvement et maintien au sec pendant l'effort grâce à son tissu stretch, une taille ajourée et la technologie Ultra Dry.",90.00,2,3,'homme'),
-('Béret en Petit Piqué crocodile brodé Lacoste',' Conçu en petit piqué de coton iconique, il est souligné par un petit crocodile vert brodé sur le côté et des finitions soignées.',80.00,4,3,'unisex'),
-('Raquette Evo Drive Gen2 Cordée',"Ce modèle a été conçu pour vous procurer le meilleur confort à la frappe et s'adresse aux joueurs qui veulent développer la puissance de leurs coups en gardant la maîtrise de la trajectoire de balle.",179.95,1,2,'unisex'),
-('Chaussures SFX 4 Clay Women','Avec son fit large et l’extension du talon, elle offre un confort particulièrement moelleux tout en assurant de la stabilité sur chaque appui.',120.00,3,2,'femme'),
-('Pantalon de tennis Walk On Adidas',"Léger, doux et doté d'une doublure respirante, ce pantalon de tennis adidas t'offre un maximum de style et de confort.",75.00,2,5,'homme'),
-('Chaussettes mi-mollet de tennis Adidas','Conçues pour toutes les personnes qui visent la performance, cette paire de chaussettes de tennis mi-mollet rembourrées est parfaite pour s’offrir un confort au top.',18.00,4,5,'unisex'),
-('Serre-poignets de tennis Nike Premier','Les serre-poignets de tennis Nike Premier sont fabriqués avec un matériau absorbant extensible pour évacuer la transpiration pendant que vous jouez.',14.99,4,4,'unisex'),
-('Pantalon de tennis taille mi-haute Dri-FIT pour femme Nike Advantage',"Prêt pour affronter les micros dans la tente de presse, ce pantalon réinvente les échauffements classiques pour les meilleures joueuses de tennis d'aujourd'hui.",74.99,2,4,'femme');
+INSERT INTO products (name, description, price, category_id, brand_id, gender) VALUES
 
+('Raquette de Tennis Shift 99 Pro V1','Cette raquette révolutionnaire intègre des technologies modernes pour créer des effets importants avec un confort inégalé.',199.99,1,1,'unisex'),
+
+('Raquette de Tennis Pro Staff X v14','Idéale pour les joueurs qui apprécient les sensations classiques des raquettes Pro Staff mais qui recherchent une raquette plus tolérante et facile à manier.',229.99,1,1,'unisex'),
+
+('Chaussures Nike Vapor Pro 3','Chaussure de tennis surface dure pour hommes',129.99,3,4,'homme'),
+
+('Hoodie Nike Court Heritage','Hoodie de tennis confortable pour hommes',100.00,2,4,'homme'),
+
+('Short Nike Court Victory',"Prêt pour l'entraînement, prêt pour le jeu : ce short respirant vous garde au sec sur et en dehors du court.",59.99,2,4,'homme'),
+
+('Sac Nike Gym Club retro Off-White','Sac de voyage Old School idéal pour les entrainements',45.00,5,4,'unisex'),
+
+('Gold Academy x3','Balles de tennis',6.99,4,2,'unisex'),
+
+('Survêtement Lacoste Tennis x Daniil Medvedev','Survêtement officiel',260.00,2,3,'homme'),
+
+('Chaussure de tennis Adizero Ubersonic','Chaussure de tennis Adidas haute performance',135.00,3,5,'homme'),
+
+('Short de tennis Climacool Club','Short respirant Adidas Climacool',35.00,2,5,'homme'),
+
+('Chaussure de tennis Gamecourt 2','Chaussure Adidas Gamecourt confortable',95.00,3,5,'homme'),
+
+('Sac Wilson Super Tour Pro Staff 9R','Le sac de tennis Wilson Super Tour Pro Staff permet de transporter jusque 9 raquettes.',89.99,5,1,'unisex'),
+
+('Short Tennis Ultra Dry stretch Lacoste',"Ce short offre liberté de mouvement et maintien au sec pendant l'effort grâce à son tissu stretch.",90.00,2,3,'homme'),
+
+('Béret en Petit Piqué crocodile brodé Lacoste','Béret en coton avec crocodile brodé.',80.00,4,3,'unisex'),
+
+('Raquette Evo Drive Gen2 Cordée',"Raquette conçue pour puissance et confort.",179.95,1,2,'unisex'),
+
+('Chaussures SFX 4 Clay Women','Chaussures confortables avec bon maintien.',120.00,3,2,'femme'),
+
+('Pantalon de tennis Walk On Adidas',"Pantalon léger et respirant.",75.00,2,5,'homme'),
+
+('Chaussettes mi-mollet de tennis Adidas','Chaussettes rembourrées haute performance.',18.00,4,5,'unisex'),
+
+('Serre-poignets de tennis Nike Premier','Absorbe la transpiration.',14.99,4,4,'unisex'),
+
+('Pantalon Nike Advantage femme',"Pantalon tennis femme confortable.",74.99,2,4,'femme');
 
 INSERT INTO sizes (label) VALUES 
 ('S'),
@@ -66,7 +85,25 @@ INSERT INTO colors (name) VALUES
 ('Noir'),
 ('Blanc');
 
-INSERT INTO product_variants (product_id, size_id, color_id, stock, sku)
-VALUES
-(2, 4, 1, 15, 'NK-COURT-42-NOIR'),
-(2, 5, 1, 10, 'NK-COURT-43-NOIR');
+-- VÊTEMENTS
+INSERT INTO product_variants (product_id, size_id, color_id, stock)
+SELECT p.id, s.id, c.id, 10
+FROM products p
+JOIN sizes s ON s.label IN ('S','M','L','XL')
+JOIN colors c
+WHERE p.category_id = 2;
+
+-- CHAUSSURES (FIX)
+INSERT INTO product_variants (product_id, size_id, color_id, stock)
+SELECT p.id, s.id, c.id, 10
+FROM products p
+JOIN sizes s ON s.label IN ('36','37','38','39','40','41','42','43','44','45')
+JOIN colors c
+WHERE p.category_id = 3;
+
+-- AUTRES
+INSERT INTO product_variants (product_id, size_id, color_id, stock)
+SELECT p.id, NULL, c.id, 10
+FROM products p
+JOIN colors c
+WHERE p.category_id IN (1,4,5);
