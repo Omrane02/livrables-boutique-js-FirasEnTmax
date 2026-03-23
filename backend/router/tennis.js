@@ -1,14 +1,12 @@
 const express = require('express');
-const router = express.Router();
+const router  = express.Router();
 
 const tennisController = require('../controller/tennis');
 
-// 📦 PRODUITS
-router.get('/products', tennisController.getAllProducts);
-router.get('/products/:id', tennisController.getProductById);
+// ⚠️ Routes STATIQUES avant routes avec paramètres (:id)
 
-// 🎯 VARIANTS
-router.get('/products/:id/variants', tennisController.getProductVariants);
+// 🔍 FILTRE — AVANT /products/:id obligatoirement
+router.get('/products/filter', tennisController.filterProducts);
 
 // 🗂️ CATEGORIES
 router.get('/categories', tennisController.getCategories);
@@ -16,7 +14,11 @@ router.get('/categories', tennisController.getCategories);
 // 🏷️ BRANDS
 router.get('/brands', tennisController.getBrands);
 
-// 🔍 FILTRES (important pour e-commerce)
-router.get('/products/filter', tennisController.filterProducts);
+// 📦 PRODUITS
+router.get('/products',     tennisController.getAllProducts);
+router.get('/products/:id', tennisController.getProductById);
+
+// 🎯 VARIANTS
+router.get('/products/:id/variants', tennisController.getProductVariants);
 
 module.exports = router;

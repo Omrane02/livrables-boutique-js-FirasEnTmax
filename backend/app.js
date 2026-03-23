@@ -1,8 +1,10 @@
 const express = require('express');
-const app = express();
+const cors    = require('cors');
+const app     = express();
 
 const tennisRoutes = require('./router/tennis');
 
+app.use(cors());         // ← AJOUT : autorise le frontend à appeler l'API
 app.use(express.json());
 
 // route principale API
