@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>COURT ÉLITE — Tennis Boutique</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-inner">
+      <span class="loader-logo">COURT ÉLITE</span>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- CURSOR -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <!-- NAV -->
+  <header id="header">
+    <nav class="navbar">
+      <div class="nav-logo">COURT ÉLITE</div>
+      <ul class="nav-links">
+        <li><a href="#" data-filter="all" class="nav-filter active">Tout</a></li>
+        <li><a href="#" data-filter="1" class="nav-filter">Raquettes</a></li>
+        <li><a href="#" data-filter="2" class="nav-filter">Vêtements</a></li>
+        <li><a href="#" data-filter="3" class="nav-filter">Chaussures</a></li>
+        <li><a href="#" data-filter="4" class="nav-filter">Accessoires</a></li>
+        <li><a href="#" data-filter="5" class="nav-filter">Sacs</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="search-btn" id="searchToggle" aria-label="Rechercher">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="cart-btn" id="cartToggle" aria-label="Panier">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </nav>
+    <!-- SEARCH BAR -->
+    <div class="search-bar" id="searchBar">
+      <input type="text" id="searchInput" placeholder="Rechercher un produit, une marque…" autocomplete="off"/>
+      <button id="searchClose">✕</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-lines"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Nouvelle Collection 2025</p>
+      <h1 class="hero-title">
+        <span class="hero-line">LE JEU</span>
+        <span class="hero-line italic">commence</span>
+        <span class="hero-line">ICI</span>
+      </h1>
+      <p class="hero-sub">Équipez-vous comme un champion. Raquettes, vêtements, chaussures et accessoires des plus grandes marques.</p>
+      <a href="#catalogue" class="hero-cta">Découvrir la collection</a>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+    <div class="hero-stat-block">
+      <div class="hero-stat"><span class="stat-n">20+</span><span class="stat-l">Produits</span></div>
+      <div class="hero-stat"><span class="stat-n">5</span><span class="stat-l">Marques</span></div>
+      <div class="hero-stat"><span class="stat-n">100%</span><span class="stat-l">Authentique</span></div>
+    </div>
+  </section>
+
+  <!-- BRAND STRIP -->
+  <div class="brand-strip">
+    <div class="brand-track">
+      <span>Wilson</span><span>·</span>
+      <span>Babolat</span><span>·</span>
+      <span>Lacoste</span><span>·</span>
+      <span>Nike</span><span>·</span>
+      <span>Adidas</span><span>·</span>
+      <span>Wilson</span><span>·</span>
+      <span>Babolat</span><span>·</span>
+      <span>Lacoste</span><span>·</span>
+      <span>Nike</span><span>·</span>
+      <span>Adidas</span><span>·</span>
+    </div>
+  </div>
+
+  <!-- FILTERS & CATALOGUE -->
+  <section class="catalogue" id="catalogue">
+    <div class="catalogue-header">
+      <h2 class="section-title">Notre Catalogue</h2>
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label>Genre</label>
+          <select id="genderFilter">
+            <option value="all">Tous</option>
+            <option value="homme">Homme</option>
+            <option value="femme">Femme</option>
+            <option value="unisex">Unisex</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Marque</label>
+          <select id="brandFilter">
+            <option value="all">Toutes</option>
+            <option value="Wilson">Wilson</option>
+            <option value="Babolat">Babolat</option>
+            <option value="Lacoste">Lacoste</option>
+            <option value="Nike">Nike</option>
+            <option value="Adidas">Adidas</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Prix max</label>
+          <div class="range-wrap">
+            <input type="range" id="priceRange" min="0" max="300" value="300" step="5"/>
+            <span id="priceDisplay">300 €</span>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label>Trier par</label>
+          <select id="sortFilter">
+            <option value="default">Par défaut</option>
+            <option value="price-asc">Prix ↑</option>
+            <option value="price-desc">Prix ↓</option>
+            <option value="name-asc">Nom A→Z</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="products-grid" id="productsGrid">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="no-results" id="noResults" style="display:none">
+      <p>Aucun produit trouvé pour ces critères.</p>
+    </div>
+  </section>
+
+  <!-- CART PANEL -->
+  <aside class="cart-panel" id="cartPanel">
+    <div class="cart-header">
+      <h3>Votre Panier</h3>
+      <button id="cartClose">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <p class="cart-empty">Votre panier est vide.</p>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cartTotal">0,00 €</span>
+      </div>
+      <button class="checkout-btn">Commander</button>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+
+  <!-- PRODUCT MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="productModal">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h2>COURT ÉLITE</h2>
+        <p>L'équipement des champions, accessible à tous.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#">Accueil</a></li>
+          <li><a href="#">Catalogue</a></li>
+          <li><a href="#">Marques</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Informations</h4>
+        <ul>
+          <li><a href="#">Livraison</a></li>
+          <li><a href="#">Retours</a></li>
+          <li><a href="#">CGV</a></li>
+          <li><a href="#">Confidentialité</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Court Élite — Tous droits réservés</span>
+    </div>
+  </footer>
+
+<script src="script/main.js"></script>
+</body>
+</html>
