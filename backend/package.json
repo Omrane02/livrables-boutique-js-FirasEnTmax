@@ -1,0 +1,26 @@
+{
+  "name": "firasentmax",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Omrane02/FirasEnTmax#readme",
+  "bugs": {
+    "url": "https://github.com/Omrane02/FirasEnTmax/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Omrane02/FirasEnTmax.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "supervisor": "^0.12.0"
+  }
+}
