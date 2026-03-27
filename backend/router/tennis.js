@@ -1,22 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const { getAllProducts, getProductById, getProductsFiltered, getAllCategories, getAllBrands } = require('../controller/tennis');
 
-const tennisController = require('../controller/tennis');
-
-// 📦 PRODUITS
-router.get('/products', tennisController.getAllProducts);
-router.get('/products/:id', tennisController.getProductById);
-
-// 🎯 VARIANTS
-router.get('/products/:id/variants', tennisController.getProductVariants);
-
-// 🗂️ CATEGORIES
-router.get('/categories', tennisController.getCategories);
-
-// 🏷️ BRANDS
-router.get('/brands', tennisController.getBrands);
-
-// 🔍 FILTRES (important pour e-commerce)
-router.get('/products/filter', tennisController.filterProducts);
+router.get('/products', getAllProducts);
+router.get('/products/filter', getProductsFiltered);
+router.get('/products/:id', getProductById);
+router.get('/categories', getAllCategories);
+router.get('/brands', getAllBrands);
 
 module.exports = router;
