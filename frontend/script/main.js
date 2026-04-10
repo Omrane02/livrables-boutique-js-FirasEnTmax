@@ -11,6 +11,7 @@
 
 const API_BASE   = "http://localhost:5000/api";
 const IMG_BASE   = "http://localhost:5000/images";
+const CART_STORAGE_KEY = "courtelite_cart";
 
 const getToken    = () => localStorage.getItem("token");
 const setToken    = (t) => localStorage.setItem("token", t);
@@ -147,6 +148,8 @@ window.addEventListener("load", () => {
   injectUserButton();
 
   loadProducts().then(() => {
+    loadCartFromLocalStorage();
+    renderCart();
     setTimeout(() => {
       loader.classList.add("hidden");
       renderProducts();
@@ -155,7 +158,7 @@ window.addEventListener("load", () => {
 
   if (getToken()) {
     apiFetch("/auth/profile")
-      .then((user) => { state.currentUser = user; updateAuthUI(); return syncCartFromAPI(); })
+      .then((user) => { state.currentUser = user; updateAuthUI(); })
       .catch(() => removeToken());
   }
 });
@@ -217,7 +220,7 @@ function injectAuthModal() {
     try {
       const data = await apiFetch("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
       setToken(data.token); state.currentUser = data.user || { email };
-      closeAuthModal(); updateAuthUI(); await syncCartFromAPI();
+      closeAuthModal(); updateAuthUI();
       showToast("✓ Connecté avec succès !");
     } catch (e) { $("loginError").textContent = e.message || "Identifiants incorrects."; }
   });
@@ -262,7 +265,7 @@ function injectUserButton() {
   btn.addEventListener("click", () => {
     if (state.currentUser) {
       if (confirm(`Connecté : ${state.currentUser.email || state.currentUser.name}\n\nSe déconnecter ?`)) {
-        removeToken(); state.currentUser = null; state.cart = []; renderCart(); updateAuthUI(); showToast("Déconnecté.");
+        removeToken(); state.currentUser = null; updateAuthUI(); showToast("Déconnecté.");
       }
     } else { openAuthModal("login"); }
   });
@@ -274,47 +277,67 @@ function updateAuthUI() {
 }
 
 // ─────────────────────────────────────────────
-// 9. CART API
+// 9. CART LOCAL STORAGE
 // ─────────────────────────────────────────────
 
-async function syncCartFromAPI() {
-  if (!getToken()) return;
-  try {
-    const items = await apiFetch("/cart");
-    if (!Array.isArray(items)) return;
-    state.cart = items.map((item) => {
-      const product = state.products.find((p) => p.id === item.product_id) || {
-        id: item.product_id, name: item.product_name || item.name,
-        price: parseFloat(item.price), brand_id: item.brand_id,
-        category_id: item.category_id, gender: item.gender || "unisex",
-      };
-      return { product, qty: item.quantity, cartItemId: item.id };
-    });
-    renderCart();
-  } catch (e) { console.warn("Could not sync cart:", e.message); }
+function saveCartToLocalStorage() {
+  const payload = state.cart.map(({ product, qty }) => ({
+    product,
+    qty,
+  }));
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(payload));
 }
 
-async function addToCart(product) {
-  const existing = state.cart.find((i) => i.product.id === product.id);
-  if (existing) existing.qty += 1; else state.cart.push({ product, qty: 1 });
-  renderCart();
-  showToast(`✓ ${product.name.split(" ").slice(0, 3).join(" ")}… ajouté`);
-  if (getToken()) {
-    try { await apiFetch("/cart", { method: "POST", body: JSON.stringify({ product_id: product.id, quantity: 1 }) }); await syncCartFromAPI(); }
-    catch (e) { console.warn("Cart API error:", e.message); }
+function loadCartFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) {
+      state.cart = [];
+      return;
+    }
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      state.cart = [];
+      return;
+    }
+
+    state.cart = parsed.map((item) => {
+      const productId = parseInt(item?.product?.id ?? item?.productId, 10);
+      const productFromCatalog = state.products.find((p) => p.id === productId);
+      const fallbackProduct = item?.product || null;
+      const product = productFromCatalog || fallbackProduct;
+
+      return {
+        product: product ? { ...product, price: parseFloat(product.price) } : null,
+        qty: Math.max(1, parseInt(item.qty, 10) || 1),
+      };
+    });
+
+    state.cart = state.cart.filter((i) => i.product && Number.isFinite(i.product.price));
+  } catch (e) {
+    console.warn("Impossible de charger le panier local:", e.message);
+    state.cart = [];
   }
 }
-async function removeFromCart(productId) {
-  const item = state.cart.find((i) => i.product.id === productId);
-  state.cart = state.cart.filter((i) => i.product.id !== productId); renderCart();
-  if (getToken() && item?.cartItemId) { try { await apiFetch(`/cart/${item.cartItemId}`, { method: "DELETE" }); } catch (e) { console.warn(e.message); } }
+
+function addToCart(product) {
+  const existing = state.cart.find((i) => i.product.id === product.id);
+  if (existing) existing.qty += 1; else state.cart.push({ product, qty: 1 });
+  saveCartToLocalStorage();
+  renderCart();
+  showToast(`✓ ${product.name.split(" ").slice(0, 3).join(" ")}… ajouté`);
 }
-async function updateQty(productId, delta) {
+function removeFromCart(productId) {
+  state.cart = state.cart.filter((i) => i.product.id !== productId); renderCart();
+  saveCartToLocalStorage();
+}
+function updateQty(productId, delta) {
   const item = state.cart.find((i) => i.product.id === productId); if (!item) return;
   item.qty += delta;
-  if (item.qty <= 0) { await removeFromCart(productId); return; }
+  if (item.qty <= 0) { removeFromCart(productId); return; }
+  saveCartToLocalStorage();
   renderCart();
-  if (getToken() && item.cartItemId) { try { await apiFetch(`/cart/${item.cartItemId}`, { method: "PUT", body: JSON.stringify({ quantity: item.qty }) }); } catch (e) { console.warn(e.message); } }
 }
 
 // ─────────────────────────────────────────────
@@ -328,7 +351,7 @@ async function checkout() {
     const orderItems = state.cart.map((i) => ({ product_id: i.product.id, quantity: i.qty, price: i.product.price }));
     const total = state.cart.reduce((acc, i) => acc + i.product.price * i.qty, 0);
     await apiFetch("/orders", { method: "POST", body: JSON.stringify({ items: orderItems, total }) });
-    await apiFetch("/cart/clear", { method: "DELETE" });
+    localStorage.removeItem(CART_STORAGE_KEY);
     state.cart = []; renderCart(); closeCart();
     showToast("✓ Commande passée avec succès ! 🎾");
   } catch (e) { showToast("Erreur : " + e.message); }
