@@ -1,14 +1,19 @@
 const db = require('../database/db');
 
-// POST passer une commande depuis le panier
 const createOrder = async (req, res) => {
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
 
-        const { address_id } = req.body;
+        const { address_id, items } = req.body;
+        // items = [{ product_variant_id: 383, quantity: 1 }, ...]
 
-        // Vérifier que l'adresse appartient à l'utilisateur
+        if (!items || items.length === 0) {
+            await connection.rollback();
+            return res.status(400).json({ error: 'Le panier est vide' });
+        }
+
+        // Vérifier l'adresse
         if (address_id) {
             const [address] = await connection.query(
                 'SELECT id FROM addresses WHERE id = ? AND user_id = ?',
@@ -20,31 +25,35 @@ const createOrder = async (req, res) => {
             }
         }
 
-        // Récupérer le panier
-        const [cartItems] = await connection.query(`
-            SELECT c.*, pv.stock, p.price
-            FROM cart c
-            JOIN product_variants pv ON c.product_variant_id = pv.id
-            JOIN products p ON pv.product_id = p.id
-            WHERE c.user_id = ?
-        `, [req.user.id]);
+        // Vérifier le stock et récupérer les prix depuis la DB
+        let total = 0;
+        const validatedItems = [];
 
-        if (cartItems.length === 0) {
-            await connection.rollback();
-            return res.status(400).json({ error: 'Le panier est vide' });
-        }
+        for (const item of items) {
+            const [rows] = await connection.query(`
+                SELECT pv.id, pv.stock, p.price
+                FROM product_variants pv
+                JOIN products p ON pv.product_id = p.id
+                WHERE pv.id = ?
+            `, [item.product_variant_id]);
 
-        // Vérifier le stock
-        for (const item of cartItems) {
-            if (item.stock < item.quantity) {
+            if (rows.length === 0) {
                 await connection.rollback();
-                return res.status(400).json({ error: `Stock insuffisant pour le produit id ${item.product_variant_id}` });
+                return res.status(404).json({ error: `Variante ${item.product_variant_id} introuvable` });
             }
+
+            const variant = rows[0];
+
+            if (variant.stock < item.quantity) {
+                await connection.rollback();
+                return res.status(400).json({ error: `Stock insuffisant pour la variante ${item.product_variant_id}` });
+            }
+
+            total += variant.price * item.quantity;
+            validatedItems.push({ ...item, price: variant.price });
         }
 
-        const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-        // Créer la commande avec l'adresse
+        // Créer la commande
         const [order] = await connection.query(
             'INSERT INTO orders (user_id, total, address_id) VALUES (?, ?, ?)',
             [req.user.id, total.toFixed(2), address_id || null]
@@ -53,7 +62,7 @@ const createOrder = async (req, res) => {
         const orderId = order.insertId;
 
         // Insérer les articles + décrémenter stock
-        for (const item of cartItems) {
+        for (const item of validatedItems) {
             await connection.query(
                 'INSERT INTO order_items (order_id, product_variant_id, quantity, price) VALUES (?, ?, ?, ?)',
                 [orderId, item.product_variant_id, item.quantity, item.price]
@@ -63,9 +72,6 @@ const createOrder = async (req, res) => {
                 [item.quantity, item.product_variant_id]
             );
         }
-
-        // Vider le panier
-        await connection.query('DELETE FROM cart WHERE user_id = ?', [req.user.id]);
 
         await connection.commit();
 
