@@ -15,10 +15,14 @@ const app = express();
 const PORT = 5000;
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: ['http://127.0.0.1:5500', 'http://localhost:5500'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use('/images', express.static(require('path').join(__dirname, 'assets/img')));
 app.use('/api', tennisRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/cart', cartRouter);
