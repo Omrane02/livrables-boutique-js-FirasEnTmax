@@ -64,29 +64,43 @@ img { display: block; max-width: 100%; }
 }
 @keyframes loadFill { to { width: 100%; } }
 
-/* ---- CUSTOM CURSOR ---- */
+/* 1. BRING BACK THE REAL MOUSE */
+body, button, .product-card {
+  cursor: auto !important; /* This ensures the mouse is NOT invisible */
+}
+
+/* 2. STYLE THE CUSTOM DOTS (Optional overlay) */
 .cursor {
-  width: 8px; height: 8px;
-  background: var(--accent);
-  border-radius: 50%;
-  position: fixed; top: 0; left: 0;
-  pointer-events: none; z-index: 9998;
+  width: 8px;
+  height: 8px;
+  background: var(--accent); 
+  border-radius: 50%; /* Makes it a circle */
+  position: fixed; 
+  top: 0; left: 0;
+  pointer-events: none; 
+  z-index: 9998;
   transform: translate(-50%, -50%);
-  transition: background 0.2s;
 }
+
 .cursor-follower {
-  width: 36px; height: 36px;
-  border: 1.5px solid var(--accent);
-  border-radius: 50%;
-  position: fixed; top: 0; left: 0;
-  pointer-events: none; z-index: 9997;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--accent);
+  border-radius: 50%; /* Makes it a circle */
+  position: fixed; 
+  top: 0; left: 0;
+  pointer-events: none; 
+  z-index: 9997;
   transform: translate(-50%, -50%);
-  transition: transform 0.12s ease, width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
-  opacity: 0.6;
+  transition: transform 0.1s ease-out;
+  opacity: 0.8;
 }
+
 body.cursor-hover .cursor-follower {
-  width: 56px; height: 56px;
-  opacity: 0.3;
+  width: 45px;
+  height: 45px;
+  transform: translate(-50%, -50%) rotate(45deg); /* Rotates on hover */
+  opacity: 1;
 }
 
 /* ---- NAVBAR ---- */
