@@ -1,7 +1,4 @@
-/* =============================================
-   COURT ÉLITE — main.js
-   Tennis Boutique — Full Frontend Logic (API Connected)
-   ============================================= */
+
 
 "use strict";
 
@@ -9,8 +6,8 @@
 // 1. CONFIG
 // ─────────────────────────────────────────────
 
-const API_BASE   = "http://localhost:5000/api";
-const IMG_BASE   = "http://localhost:5000/images";
+const API_BASE = "http://localhost:5000/api";
+const IMG_BASE = "http://localhost:5000/images";
 
 const getToken    = () => localStorage.getItem("token");
 const setToken    = (t) => localStorage.setItem("token", t);
@@ -23,7 +20,7 @@ async function apiFetch(path, options = {}) {
   const res = await fetch(API_BASE + path, { ...options, headers });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || `HTTP ${res.status}`);
+    throw new Error(err.error || err.message || `HTTP ${res.status}`);
   }
   if (res.status === 204) return null;
   return res.json();
@@ -34,36 +31,40 @@ async function apiFetch(path, options = {}) {
 // ─────────────────────────────────────────────
 
 const PRODUCT_IMG = {
-  1:  "Raquette de tennis Shift 99 Pro V1.webp",
-  2:  "Raquette de tennis Pro Staff X v14.webp",
-  3:  "Nike Vapor Pro 3.avif",
-  4:  "Hoodie Nike Court Heritage.avif",
-  5:  "Short Nike Court Victory(black).avif",
-  6:  "sac Nike Gym Club retro Off-White.avif",
-  7:  "Gold_Academy_x3.webp",
-  8:  "Survêtement_Lacoste_Tennis_x_Daniil Medvedev.avif",
-  9:  "Adizero Ubersonic 5 Rouge.webp",
-  10: "Short de tennis Climacool Club.webp",
-  11: "Chaussure de tennis Gamecourt 2.jpg",
-  12: "Sac Wilson Super Tour Pro Staff 9R.webp",
-  13: "Short Tennis Ultra Dry stretch Lacoste.avif",
-  14: "Béret en Petit Piqué crocodile brodé Lacoste.avif",
-  15: "Raquette Evo Drive Gen2 Cordée.webp",
-  16: "Chaussures SFX 4 Clay Wome.webp",
-  17: "Pantalon de tennis Walk On Adidas.webp",
-  18: "Chaussettes mi-mollet de tennis Adidas.jpg",
-  19: "Serre-poignets de tennis Nike Premier.jpg",
-  20: "Pantalon Nike Advantage femme.jpg",
+  1:  ["Raquette de tennis Shift 99 Pro V1.webp", "Raquette de tennis Shift 99 Pro V1(1).webp", "Raquette de tennis Shift 99 Pro V1(2).webp"],
+  2:  ["Raquette de tennis Pro Staff X v14.webp", "Raquette de tennis Pro Staff X v14(1).webp", "Raquette de tennis Pro Staff X v14(2).webp"],
+  3:  ["Nike Vapor Pro 3.avif", "Nike Vapor Pro 3(1).avif", "Nike Vapor Pro 3(2).avif"],
+  4:  ["Hoodie Nike Court Heritage.avif", "Hoodie Nike Court Heritage(1).avif", "Hoodie Nike Court Heritage(2).avif"],
+  5:  ["Short Nike Court Victory(black).avif", "Short Nike Court Victory(black1).avif", "Short Nike Court Victory(black2).avif", "Short Nike Court Victory(white).avif"],
+  6:  ["sac Nike Gym Club retro Off-White.avif", "Sac Nike Gym Club retro Off-White(1).avif", "Sac Nike Gym Club retro Off-White(2).avif", "Sac Nike Gym Club retro Off-White(purple).avif"],
+  7:  ["Gold_Academy_x3.webp", "Gold_Academy_x3(1).webp", "Gold_Academy_x3(2).webp"],
+  8:  ["Survêtement_Lacoste_Tennis_x_Daniil Medvedev.avif", "Survêtement_Lacoste_Tennis_x_Daniil Medvedev(1).avif", "Survêtement_Lacoste_Tennis_x_Daniil Medvedev(2).avif"],
+  9:  ["Adizero Ubersonic 5 Rouge.webp", "Adizero Ubersonic 5 Rouge(1).webp", "Adizero Ubersonic 5 Rouge(2).webp"],
+  10: ["Short de tennis Climacool Club.webp", "Short de tennis Climacool Club(1).webp", "Short de tennis Climacool Club(2).webp"],
+  11: ["Chaussure de tennis Gamecourt 2.jpg", "Chaussure de tennis Gamecourt 2(1).jpg", "Chaussure de tennis Gamecourt 2(2).jpg"],
+  12: ["Sac Wilson Super Tour Pro Staff 9R.webp", "Sac Wilson Super Tour Pro Staff 9R(1).webp", "Sac Wilson Super Tour Pro Staff 9R(2).webp", "Sac Wilson Super Tour Pro Staff 9R(3).webp"],
+  13: ["Short Tennis Ultra Dry stretch Lacoste.avif", "Short Tennis Ultra Dry stretch Lacoste(1).avif", "Short Tennis Ultra Dry stretch Lacoste(2).avif"],
+  14: ["Béret en Petit Piqué crocodile brodé Lacoste.avif", "Béret en Petit Piqué crocodile brodé Lacoste(1).avif", "Béret en Petit Piqué crocodile brodé Lacoste(2).avif"],
+  15: ["Raquette Evo Drive Gen2 Cordée.webp", "Raquette Evo Drive Gen2 Cordée(1).webp", "Raquette Evo Drive Gen2 Cordée(2).webp"],
+  16: ["Chaussures SFX 4 Clay Wome.webp", "Chaussures SFX 4 Clay Wome(1).webp", "Chaussures SFX 4 Clay Wome(2).webp"],
+  17: ["Pantalon de tennis Walk On Adidas.webp", "Pantalon de tennis Walk On Adidas(1).webp", "Pantalon de tennis Walk On Adidas(2).webp"],
+  18: ["Chaussettes mi-mollet de tennis Adidas.jpg", "Chaussettes mi-mollet de tennis Adidas(1).jpg", "Chaussettes mi-mollet de tennis Adidas(2).jpg"],
+  19: ["Serre-poignets de tennis Nike Premier white.jpg", "Serre-poignets de tennis Nike Premier.jpg"],
+  20: ["Pantalon Nike Advantage femme.jpg", "Pantalon Nike Advantage femme(2).jpg", "Pantalon Nike Advantage femme(3).jpg"],
 };
 
-function getProductImg(product) {
-  const filename = PRODUCT_IMG[product.id];
-  if (filename) return `${IMG_BASE}/${encodeURIComponent(filename)}`;
-  return null;
+function getProductImgs(product) {
+  const files = PRODUCT_IMG[product.id];
+  if (!files) return [];
+  return files.map((f) => `${IMG_BASE}/${encodeURIComponent(f)}`);
+}
+function getProductMainImg(product) {
+  const imgs = getProductImgs(product);
+  return imgs.length > 0 ? imgs[0] : null;
 }
 
 // ─────────────────────────────────────────────
-// 3. STATIC MAPS + FALLBACK DATA
+// 3. STATIC MAPS + FALLBACK
 // ─────────────────────────────────────────────
 
 const CATEGORIES = { 1: "Raquettes", 2: "Vêtements", 3: "Chaussures", 4: "Accessoires", 5: "Sacs" };
@@ -100,14 +101,7 @@ const state = {
   products: [],
   cart: [],
   currentUser: null,
-  filter: {
-    category: "all",
-    gender: "all",
-    brand: "all",
-    maxPrice: 300,
-    search: "",
-    sort: "default",
-  },
+  filter: { category: "all", gender: "all", brand: "all", maxPrice: 300, search: "", sort: "default" },
 };
 
 // ─────────────────────────────────────────────
@@ -145,14 +139,9 @@ const sortFilter     = $("sortFilter");
 
 window.addEventListener("load", () => {
   injectUserButton();
-
   loadProducts().then(() => {
-    setTimeout(() => {
-      loader.classList.add("hidden");
-      renderProducts();
-    }, 1500);
+    setTimeout(() => { loader.classList.add("hidden"); renderProducts(); }, 1500);
   });
-
   if (getToken()) {
     apiFetch("/auth/profile")
       .then((user) => { state.currentUser = user; updateAuthUI(); return syncCartFromAPI(); })
@@ -166,84 +155,243 @@ async function loadProducts() {
     if (Array.isArray(data) && data.length > 0) {
       state.products = data.map((p) => ({ ...p, price: parseFloat(p.price) }));
       console.log("✅ Produits chargés depuis l'API :", state.products.length);
-    } else {
-      throw new Error("Réponse vide");
-    }
+    } else throw new Error("Réponse vide");
   } catch (e) {
-    console.warn("⚠ Fallback données statiques :", e.message);
+    console.warn("⚠ Fallback :", e.message);
     state.products = STATIC_PRODUCTS;
   }
 }
 
 // ─────────────────────────────────────────────
-// 7. AUTH MODAL
+// 7. AUTH MODAL (Login + Register complet)
 // ─────────────────────────────────────────────
 
 function injectAuthModal() {
   if ($("authModal")) return;
   document.body.insertAdjacentHTML("beforeend", `
-    <div class="modal-backdrop" id="authModal" style="display:none">
-      <div class="modal" id="authModalInner">
-        <button class="modal-close" id="authModalClose">✕</button>
-        <div class="modal-body" id="authModalBody">
-          <div id="authLoginForm">
-            <h2 style="margin-bottom:1.2rem">Connexion</h2>
-            <div class="auth-field"><label>Email</label><input type="email" id="loginEmail" placeholder="votre@email.com" autocomplete="email"/></div>
-            <div class="auth-field"><label>Mot de passe</label><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/></div>
-            <p class="auth-error" id="loginError"></p>
-            <button class="modal-add" id="loginSubmit">Se connecter</button>
-            <p class="auth-switch">Pas encore de compte ? <a href="#" id="switchToRegister">Créer un compte</a></p>
-          </div>
-          <div id="authRegisterForm" style="display:none">
-            <h2 style="margin-bottom:1.2rem">Créer un compte</h2>
-            <div class="auth-field"><label>Nom</label><input type="text" id="registerName" placeholder="Votre nom" autocomplete="name"/></div>
-            <div class="auth-field"><label>Email</label><input type="email" id="registerEmail" placeholder="votre@email.com" autocomplete="email"/></div>
-            <div class="auth-field"><label>Mot de passe</label><input type="password" id="registerPassword" placeholder="••••••••" autocomplete="new-password"/></div>
-            <p class="auth-error" id="registerError"></p>
-            <button class="modal-add" id="registerSubmit">S'inscrire</button>
-            <p class="auth-switch">Déjà un compte ? <a href="#" id="switchToLogin">Se connecter</a></p>
-          </div>
+    <div class="auth-modal-overlay" id="authModal">
+      <div class="auth-modal-box" id="authModalInner">
+
+        <!-- HEADER -->
+        <div class="auth-modal-header">
+          <div class="auth-modal-logo">The Carlton Club</div>
+          <button class="auth-modal-close" id="authModalClose">✕</button>
         </div>
+
+        <!-- TABS -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tabLogin" data-tab="login">Connexion</button>
+          <button class="auth-tab" id="tabRegister" data-tab="register">Créer un compte</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div class="auth-form" id="authLoginForm">
+          <p class="auth-subtitle">Bienvenue ! Connectez-vous à votre compte.</p>
+          <div class="auth-field">
+            <label>Email</label>
+            <input type="email" id="loginEmail" placeholder="votre@email.com" autocomplete="email"/>
+          </div>
+          <div class="auth-field">
+            <label>Mot de passe</label>
+            <div class="auth-input-wrap">
+              <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
+              <button type="button" class="auth-eye" data-target="loginPassword">👁</button>
+            </div>
+          </div>
+          <p class="auth-error" id="loginError"></p>
+          <button class="auth-submit-btn" id="loginSubmit">
+            <span>Se connecter</span>
+          </button>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div class="auth-form" id="authRegisterForm" style="display:none">
+          <p class="auth-subtitle">Créez votre compte et rejoignez The Carlton Club.</p>
+          <div class="auth-row">
+            <div class="auth-field">
+              <label>Prénom</label>
+              <input type="text" id="registerFirstName" placeholder="Jean" autocomplete="given-name"/>
+            </div>
+            <div class="auth-field">
+              <label>Nom</label>
+              <input type="text" id="registerLastName" placeholder="Dupont" autocomplete="family-name"/>
+            </div>
+          </div>
+          <div class="auth-field">
+            <label>Email</label>
+            <input type="email" id="registerEmail" placeholder="votre@email.com" autocomplete="email"/>
+          </div>
+          <div class="auth-field">
+            <label>Téléphone <span class="auth-optional">(optionnel)</span></label>
+            <input type="tel" id="registerPhone" placeholder="+33 6 00 00 00 00" autocomplete="tel"/>
+          </div>
+          <div class="auth-field">
+            <label>Mot de passe</label>
+            <div class="auth-input-wrap">
+              <input type="password" id="registerPassword" placeholder="••••••••" autocomplete="new-password"/>
+              <button type="button" class="auth-eye" data-target="registerPassword">👁</button>
+            </div>
+            <div class="auth-password-strength" id="passwordStrength">
+              <div class="strength-bar" id="strengthBar"></div>
+            </div>
+            <span class="auth-strength-label" id="strengthLabel"></span>
+          </div>
+          <div class="auth-field">
+            <label>Confirmer le mot de passe</label>
+            <div class="auth-input-wrap">
+              <input type="password" id="registerConfirm" placeholder="••••••••" autocomplete="new-password"/>
+              <button type="button" class="auth-eye" data-target="registerConfirm">👁</button>
+            </div>
+          </div>
+          <p class="auth-error" id="registerError"></p>
+          <button class="auth-submit-btn" id="registerSubmit">
+            <span>Créer mon compte</span>
+          </button>
+        </div>
+
       </div>
     </div>
   `);
+
+  // Close
   $("authModalClose").addEventListener("click", closeAuthModal);
   $("authModal").addEventListener("click", (e) => { if (e.target === $("authModal")) closeAuthModal(); });
-  $("switchToRegister").addEventListener("click", (e) => { e.preventDefault(); showAuthForm("register"); });
-  $("switchToLogin").addEventListener("click", (e) => { e.preventDefault(); showAuthForm("login"); });
+
+  // Tabs
+  document.querySelectorAll(".auth-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".auth-tab").forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      showAuthForm(tab.dataset.tab);
+    });
+  });
+
+  // Show/hide password
+  document.querySelectorAll(".auth-eye").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const input = $(btn.dataset.target);
+      input.type = input.type === "password" ? "text" : "password";
+      btn.textContent = input.type === "password" ? "👁" : "🙈";
+    });
+  });
+
+  // Password strength
+  $("registerPassword").addEventListener("input", () => {
+    const val = $("registerPassword").value;
+    const strength = getPasswordStrength(val);
+    const bar   = $("strengthBar");
+    const label = $("strengthLabel");
+    const colors = ["", "#e05a5a", "#f0a500", "#4caf50", "#2e7d32"];
+    const labels = ["", "Faible", "Moyen", "Fort", "Très fort"];
+    bar.style.width   = (strength * 25) + "%";
+    bar.style.background = colors[strength];
+    label.textContent = val.length > 0 ? labels[strength] : "";
+    label.style.color = colors[strength];
+  });
+
+  // LOGIN
   $("loginSubmit").addEventListener("click", async () => {
-    const email = $("loginEmail").value.trim(), password = $("loginPassword").value;
+    const email    = $("loginEmail").value.trim();
+    const password = $("loginPassword").value;
     $("loginError").textContent = "";
+
+    if (!email || !password) { $("loginError").textContent = "Veuillez remplir tous les champs."; return; }
+
+    setSubmitting("loginSubmit", true);
     try {
       const data = await apiFetch("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
-      setToken(data.token); state.currentUser = data.user || { email };
-      closeAuthModal(); updateAuthUI(); await syncCartFromAPI();
-      showToast("✓ Connecté avec succès !");
-    } catch (e) { $("loginError").textContent = e.message || "Identifiants incorrects."; }
+      setToken(data.token);
+      state.currentUser = data.user || { email };
+      closeAuthModal();
+      updateAuthUI();
+      await syncCartFromAPI();
+      showToast(`✓ Bonjour ${data.user?.first_name || ""} !`);
+    } catch (e) {
+      $("loginError").textContent = e.message || "Email ou mot de passe incorrect.";
+    } finally { setSubmitting("loginSubmit", false); }
   });
+
+  // REGISTER
   $("registerSubmit").addEventListener("click", async () => {
-    const name = $("registerName").value.trim(), email = $("registerEmail").value.trim(), password = $("registerPassword").value;
+    const first_name = $("registerFirstName").value.trim();
+    const last_name  = $("registerLastName").value.trim();
+    const email      = $("registerEmail").value.trim();
+    const phone      = $("registerPhone").value.trim();
+    const password   = $("registerPassword").value;
+    const confirm    = $("registerConfirm").value;
     $("registerError").textContent = "";
+
+    // Validation
+    if (!first_name || !last_name || !email || !password) {
+      $("registerError").textContent = "Veuillez remplir tous les champs obligatoires."; return;
+    }
+    if (password !== confirm) {
+      $("registerError").textContent = "Les mots de passe ne correspondent pas."; return;
+    }
+    if (password.length < 6) {
+      $("registerError").textContent = "Le mot de passe doit contenir au moins 6 caractères."; return;
+    }
+
+    setSubmitting("registerSubmit", true);
     try {
-      const data = await apiFetch("/auth/register", { method: "POST", body: JSON.stringify({ name, email, password }) });
-      setToken(data.token); state.currentUser = data.user || { email, name };
-      closeAuthModal(); updateAuthUI(); showToast("✓ Compte créé ! Bienvenue 🎾");
-    } catch (e) { $("registerError").textContent = e.message || "Erreur lors de l'inscription."; }
+      await apiFetch("/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ first_name, last_name, email, password, phone: phone || null }),
+      });
+      // Auto-login after register
+      const loginData = await apiFetch("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
+      setToken(loginData.token);
+      state.currentUser = loginData.user || { email, first_name, last_name };
+      closeAuthModal();
+      updateAuthUI();
+      showToast(`✓ Bienvenue ${first_name} ! Compte créé 🎾`);
+    } catch (e) {
+      $("registerError").textContent = e.message || "Erreur lors de l'inscription.";
+    } finally { setSubmitting("registerSubmit", false); }
+  });
+
+  // Enter key support
+  ["loginEmail", "loginPassword"].forEach((id) => {
+    $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") $("loginSubmit").click(); });
+  });
+  ["registerFirstName","registerLastName","registerEmail","registerPhone","registerPassword","registerConfirm"].forEach((id) => {
+    $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") $("registerSubmit").click(); });
   });
 }
 
+function getPasswordStrength(password) {
+  let score = 0;
+  if (password.length >= 6)  score++;
+  if (password.length >= 10) score++;
+  if (/[A-Z]/.test(password) && /[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+  return score;
+}
+
+function setSubmitting(btnId, loading) {
+  const btn = $(btnId);
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.querySelector("span").textContent = loading ? "Chargement…" : (btnId === "loginSubmit" ? "Se connecter" : "Créer mon compte");
+}
+
 function openAuthModal(mode = "login") {
-  injectAuthModal(); showAuthForm(mode);
+  injectAuthModal();
+  showAuthForm(mode);
+  // Sync tab highlight
+  document.querySelectorAll(".auth-tab").forEach((t) => {
+    t.classList.toggle("active", t.dataset.tab === mode);
+  });
   $("authModal").style.display = "flex";
-  overlay.classList.add("active");
   document.body.style.overflow = "hidden";
 }
+
 function closeAuthModal() {
   if (!$("authModal")) return;
   $("authModal").style.display = "none";
-  overlay.classList.remove("active");
   document.body.style.overflow = "";
 }
+
 function showAuthForm(mode) {
   $("authLoginForm").style.display    = mode === "login"    ? "" : "none";
   $("authRegisterForm").style.display = mode === "register" ? "" : "none";
@@ -261,20 +409,24 @@ function injectUserButton() {
   document.querySelector(".nav-actions").insertBefore(btn, document.querySelector(".nav-actions").firstChild);
   btn.addEventListener("click", () => {
     if (state.currentUser) {
-      if (confirm(`Connecté : ${state.currentUser.email || state.currentUser.name}\n\nSe déconnecter ?`)) {
+      const name = `${state.currentUser.first_name || ""} ${state.currentUser.last_name || ""}`.trim() || state.currentUser.email;
+      if (confirm(`Connecté : ${name}\n\nSe déconnecter ?`)) {
         removeToken(); state.currentUser = null; state.cart = []; renderCart(); updateAuthUI(); showToast("Déconnecté.");
       }
-    } else { openAuthModal("login"); }
+    } else openAuthModal("login");
   });
 }
+
 function updateAuthUI() {
   const btn = $("userBtn"); if (!btn) return;
-  if (state.currentUser) { btn.style.color = "var(--accent, #b5a07a)"; btn.title = state.currentUser.email || "Mon compte"; }
-  else { btn.style.color = ""; btn.title = "Se connecter"; }
+  if (state.currentUser) {
+    btn.style.color = "var(--accent, #b5a07a)";
+    btn.title = `${state.currentUser.first_name || ""} ${state.currentUser.last_name || ""}`.trim() || state.currentUser.email;
+  } else { btn.style.color = ""; btn.title = "Se connecter"; }
 }
 
 // ─────────────────────────────────────────────
-// 9. CART API
+// 9. CART
 // ─────────────────────────────────────────────
 
 async function syncCartFromAPI() {
@@ -291,7 +443,7 @@ async function syncCartFromAPI() {
       return { product, qty: item.quantity, cartItemId: item.id };
     });
     renderCart();
-  } catch (e) { console.warn("Could not sync cart:", e.message); }
+  } catch (e) { console.warn("Cart sync error:", e.message); }
 }
 
 async function addToCart(product) {
@@ -358,7 +510,6 @@ document.querySelectorAll("a, button, select, input[type=range]").forEach((el) =
 // ─────────────────────────────────────────────
 
 window.addEventListener("scroll", () => { header.classList.toggle("scrolled", window.scrollY > 50); });
-
 document.querySelectorAll(".nav-filter").forEach((link) => {
   link.addEventListener("click", (e) => {
     e.preventDefault();
@@ -420,8 +571,8 @@ function buildProductCard(product, index) {
   card.className = "product-card";
   card.style.animationDelay = `${index * 0.05}s`;
 
-  const imgUrl      = getProductImg(product);
-  const brandName   = BRANDS[product.brand_id]  || product.brand    || "";
+  const imgUrl      = getProductMainImg(product);
+  const brandName   = BRANDS[product.brand_id] || product.brand || "";
   const catName     = CATEGORIES[product.category_id] || product.category || "";
   const genderLabel = { homme: "Homme", femme: "Femme", unisex: "Unisex" }[product.gender] || "";
 
@@ -430,10 +581,7 @@ function buildProductCard(product, index) {
     : `<div class="product-img-fallback">🎾</div>`;
 
   card.innerHTML = `
-    <div class="product-img-wrap">
-      ${imgHTML}
-      <div class="product-badge">${catName}</div>
-    </div>
+    <div class="product-img-wrap">${imgHTML}<div class="product-badge">${catName}</div></div>
     <div class="product-info">
       <p class="product-brand">${brandName}</p>
       <h3 class="product-name">${product.name}</h3>
@@ -462,33 +610,52 @@ function buildProductCard(product, index) {
 }
 
 // ─────────────────────────────────────────────
-// 16. MODAL
+// 16. PRODUCT MODAL WITH CAROUSEL
 // ─────────────────────────────────────────────
 
 function openModal(product) {
-  const imgUrl      = getProductImg(product);
-  const brandName   = BRANDS[product.brand_id]  || product.brand    || "";
+  const imgs        = getProductImgs(product);
+  const brandName   = BRANDS[product.brand_id] || product.brand || "";
   const catName     = CATEGORIES[product.category_id] || product.category || "";
   const genderLabel = { homme: "Homme", femme: "Femme", unisex: "Unisex" }[product.gender] || "";
 
-  const imgHTML = imgUrl
-    ? `<img src="${imgUrl}" alt="${product.name}" class="modal-product-img" onerror="this.outerHTML='<div class=\\'modal-img\\'>🎾</div>'"/>`
-    : `<div class="modal-img">🎾</div>`;
+  let carouselHTML = "";
+  if (imgs.length > 1) {
+    const slides = imgs.map((url, i) => `<div class="carousel-slide ${i === 0 ? "active" : ""}"><img src="${url}" alt="${product.name} ${i + 1}" onerror="this.parentElement.style.display='none'"/></div>`).join("");
+    const dots   = imgs.map((_, i) => `<button class="carousel-dot ${i === 0 ? "active" : ""}" data-index="${i}"></button>`).join("");
+    carouselHTML = `<div class="carousel" id="modalCarousel"><div class="carousel-track">${slides}</div><button class="carousel-btn carousel-prev" id="carouselPrev">&#8249;</button><button class="carousel-btn carousel-next" id="carouselNext">&#8250;</button><div class="carousel-dots">${dots}</div></div>`;
+  } else if (imgs.length === 1) {
+    carouselHTML = `<img src="${imgs[0]}" alt="${product.name}" class="modal-product-img" onerror="this.outerHTML='<div class=\\'modal-img\\'>🎾</div>'"/>`;
+  } else {
+    carouselHTML = `<div class="modal-img">🎾</div>`;
+  }
 
   modalBody.innerHTML = `
-    ${imgHTML}
+    ${carouselHTML}
     <div class="modal-details">
       <p class="modal-brand">${brandName}</p>
       <h2 class="modal-name">${product.name}</h2>
       <p class="modal-price">${formatPrice(product.price)}</p>
       <p class="modal-desc">${product.description}</p>
-      <div class="modal-meta">
-        <span class="meta-tag">${catName}</span>
-        <span class="meta-tag">${genderLabel}</span>
-      </div>
+      <div class="modal-meta"><span class="meta-tag">${catName}</span><span class="meta-tag">${genderLabel}</span></div>
       <button class="modal-add" data-id="${product.id}">Ajouter au panier</button>
     </div>
   `;
+
+  if (imgs.length > 1) {
+    let current = 0;
+    const slides = modalBody.querySelectorAll(".carousel-slide");
+    const dots   = modalBody.querySelectorAll(".carousel-dot");
+    function goTo(index) {
+      slides[current].classList.remove("active"); dots[current].classList.remove("active");
+      current = (index + slides.length) % slides.length;
+      slides[current].classList.add("active"); dots[current].classList.add("active");
+    }
+    $("carouselPrev").addEventListener("click", (e) => { e.stopPropagation(); goTo(current - 1); });
+    $("carouselNext").addEventListener("click", (e) => { e.stopPropagation(); goTo(current + 1); });
+    dots.forEach((dot) => dot.addEventListener("click", (e) => { e.stopPropagation(); goTo(parseInt(dot.dataset.index)); }));
+  }
+
   modalBody.querySelector(".modal-add").addEventListener("click", () => { addToCart(product); closeModal(); });
   modalBackdrop.classList.add("open");
   overlay.classList.add("active");
@@ -519,10 +686,8 @@ function renderCart() {
   }
 
   cartItems.innerHTML = state.cart.map(({ product, qty }) => {
-    const imgUrl = getProductImg(product);
-    const imgHTML = imgUrl
-      ? `<img src="${imgUrl}" alt="${product.name}" class="cart-item-img" onerror="this.outerHTML='<span>🎾</span>'"/>`
-      : `<span>🎾</span>`;
+    const imgUrl  = getProductMainImg(product);
+    const imgHTML = imgUrl ? `<img src="${imgUrl}" alt="${product.name}" class="cart-item-img" onerror="this.outerHTML='<span>🎾</span>'"/>` : `<span>🎾</span>`;
     return `
       <div class="cart-item">
         <div class="cart-item-icon">${imgHTML}</div>
@@ -557,7 +722,6 @@ function renderCart() {
 
 $("cartToggle").addEventListener("click", () => { cartPanel.classList.add("open"); overlay.classList.add("active"); document.body.style.overflow = "hidden"; });
 $("cartClose").addEventListener("click", closeCart);
-
 function closeCart() {
   cartPanel.classList.remove("open");
   if (!modalBackdrop.classList.contains("open")) { overlay.classList.remove("active"); document.body.style.overflow = ""; }
@@ -590,8 +754,10 @@ function formatPrice(value) {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     closeCart(); closeModal(); closeAuthModal();
-    if (searchBar.classList.contains("open")) {
-      searchBar.classList.remove("open"); searchInput.value = ""; state.filter.search = ""; renderProducts();
-    }
+    if (searchBar.classList.contains("open")) { searchBar.classList.remove("open"); searchInput.value = ""; state.filter.search = ""; renderProducts(); }
+  }
+  if (modalBackdrop.classList.contains("open")) {
+    if (e.key === "ArrowLeft")  { const btn = $("carouselPrev"); if (btn) btn.click(); }
+    if (e.key === "ArrowRight") { const btn = $("carouselNext"); if (btn) btn.click(); }
   }
 });
