@@ -174,7 +174,7 @@ function injectAuthModal() {
 
         <!-- HEADER -->
         <div class="auth-modal-header">
-          <div class="auth-modal-logo">The Carlton Club</div>
+          <div class="auth-modal-logo">COURT ÉLITE</div>
           <button class="auth-modal-close" id="authModalClose">✕</button>
         </div>
 
@@ -206,7 +206,7 @@ function injectAuthModal() {
 
         <!-- REGISTER FORM -->
         <div class="auth-form" id="authRegisterForm" style="display:none">
-          <p class="auth-subtitle">Créez votre compte et rejoignez The Carlton Club.</p>
+          <p class="auth-subtitle">Créez votre compte et rejoignez Court Élite.</p>
           <div class="auth-row">
             <div class="auth-field">
               <label>Prénom</label>
