@@ -112,8 +112,6 @@ const $ = (id) => document.getElementById(id);
 
 const loader         = $("loader");
 const header         = $("header");
-const cursor         = $("cursor");
-const cursorFollower = $("cursorFollower");
 const productsGrid   = $("productsGrid");
 const noResults      = $("noResults");
 const cartPanel      = $("cartPanel");
@@ -485,25 +483,6 @@ async function checkout() {
     showToast("✓ Commande passée avec succès ! 🎾");
   } catch (e) { showToast("Erreur : " + e.message); }
 }
-
-// ─────────────────────────────────────────────
-// 11. CURSOR
-// ─────────────────────────────────────────────
-
-let mouseX = 0, mouseY = 0, followerX = 0, followerY = 0;
-document.addEventListener("mousemove", (e) => {
-  mouseX = e.clientX; mouseY = e.clientY;
-  cursor.style.left = mouseX + "px"; cursor.style.top = mouseY + "px";
-});
-(function animateFollower() {
-  followerX += (mouseX - followerX) * 0.12; followerY += (mouseY - followerY) * 0.12;
-  cursorFollower.style.left = followerX + "px"; cursorFollower.style.top = followerY + "px";
-  requestAnimationFrame(animateFollower);
-})();
-document.querySelectorAll("a, button, select, input[type=range]").forEach((el) => {
-  el.addEventListener("mouseenter", () => document.body.classList.add("cursor-hover"));
-  el.addEventListener("mouseleave", () => document.body.classList.remove("cursor-hover"));
-});
 
 // ─────────────────────────────────────────────
 // 12. NAVBAR

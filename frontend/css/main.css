@@ -70,38 +70,9 @@ body, button, .product-card {
 }
  
 /* 2. STYLE THE CUSTOM DOTS (Optional overlay) */
-.cursor {
-  width: 8px;
-  height: 8px;
-  background: var(--accent);
-  border-radius: 50%; /* Makes it a circle */
-  position: fixed;
-  top: 0; left: 0;
-  pointer-events: none;
-  z-index: 9998;
-  transform: translate(-50%, -50%);
-}
- 
-.cursor-follower {
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--accent);
-  border-radius: 50%; /* Makes it a circle */
-  position: fixed;
-  top: 0; left: 0;
-  pointer-events: none;
-  z-index: 9997;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease-out;
-  opacity: 0.8;
-}
- 
-body.cursor-hover .cursor-follower {
-  width: 45px;
-  height: 45px;
-  transform: translate(-50%, -50%) rotate(45deg); /* Rotates on hover */
-  opacity: 1;
-}
+.cursor { display: none; }
+.cursor-follower { display: none; }
+body.cursor-hover .cursor-follower { display: none; }
  
 /* ---- NAVBAR ---- */
 #header {
