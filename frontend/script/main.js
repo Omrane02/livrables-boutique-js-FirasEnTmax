@@ -461,7 +461,10 @@ async function checkout() {
   if (!getToken()) { showToast("⚠ Connectez-vous pour commander."); openAuthModal("login"); return; }
   if (state.cart.length === 0) return;
   try {
-    const items = state.cart.map((i) => ({ product_variant_id: i.product.id, quantity: i.qty }));
+    const items = state.cart.map((i) => ({
+      product_variant_id: i.product.selectedVariant ? i.product.selectedVariant.id : i.product.id,
+      quantity: i.qty
+    }));
     await apiFetch("/orders", { method: "POST", body: JSON.stringify({ items }) });
     state.cart = [];
     localStorage.removeItem("cart");
@@ -587,7 +590,7 @@ function buildProductCard(product, index) {
 // 16. PRODUCT MODAL WITH CAROUSEL
 // ─────────────────────────────────────────────
 
-function openModal(product) {
+async function openModal(product) {
   const imgs        = getProductImgs(product);
   const brandName   = BRANDS[product.brand_id] || product.brand || "";
   const catName     = CATEGORIES[product.category_id] || product.category || "";
@@ -604,7 +607,6 @@ function openModal(product) {
     carouselHTML = `<div class="modal-img">🎾</div>`;
   }
 
-  // Promotion dans la modal
   const promo = getPromoForProduct(product.id);
   const modalPriceHTML = promo
     ? `<div class="modal-price-wrap">
@@ -622,9 +624,14 @@ function openModal(product) {
       ${modalPriceHTML}
       <p class="modal-desc">${product.description}</p>
       <div class="modal-meta"><span class="meta-tag">${catName}</span><span class="meta-tag">${genderLabel}</span></div>
-      <button class="modal-add" data-id="${product.id}">Ajouter au panier</button>
+      <div id="variantSelector"><p class="variant-loading">Chargement des options…</p></div>
+      <button class="modal-add" id="modalAddBtn" disabled>Ajouter au panier</button>
     </div>
   `;
+
+  modalBackdrop.classList.add("open");
+  overlay.classList.add("active");
+  document.body.style.overflow = "hidden";
 
   if (imgs.length > 1) {
     let current = 0;
@@ -640,10 +647,16 @@ function openModal(product) {
     dots.forEach((dot) => dot.addEventListener("click", (e) => { e.stopPropagation(); goTo(parseInt(dot.dataset.index)); }));
   }
 
-  modalBody.querySelector(".modal-add").addEventListener("click", () => { addToCart(product); closeModal(); });
-  modalBackdrop.classList.add("open");
-  overlay.classList.add("active");
-  document.body.style.overflow = "hidden";
+  // Charger les variantes
+  try {
+    const data = await apiFetch(`/products/${product.id}`);
+    const variants = data.variants || [];
+    renderVariantSelector(product, variants);
+  } catch (e) {
+    $("variantSelector").innerHTML = `<p class="variant-error">Options non disponibles.</p>`;
+    const addBtn = $("modalAddBtn");
+    if (addBtn) { addBtn.disabled = false; addBtn.onclick = () => { addToCart(product); closeModal(); }; }
+  }
 }
 
 function closeModal() {
@@ -735,6 +748,113 @@ function getPromoForProduct(productId) {
   return state.promotions.find((promo) => promo.product_id === productId) || null;
 }
 
+function renderVariantSelector(product, variants) {
+  const container = $("variantSelector");
+  if (!container) return;
+
+  if (variants.length === 0) {
+    container.innerHTML = "";
+    const addBtn = $("modalAddBtn");
+    if (addBtn) { addBtn.disabled = false; addBtn.onclick = () => { addToCart(product); closeModal(); }; }
+    return;
+  }
+
+  // Extraire couleurs et tailles uniques
+  const colors = [...new Map(variants.map((v) => [v.color, v])).values()].map((v) => v.color);
+  const hasSizes = variants.some((v) => v.size !== null);
+  const sizes  = hasSizes ? [...new Map(variants.filter((v) => v.size).map((v) => [v.size, v])).values()].map((v) => v.size) : [];
+
+  let selectedColor = null;
+  let selectedSize  = null;
+
+  function getMatchingVariant() {
+    return variants.find((v) => {
+      const colorMatch = v.color === selectedColor;
+      const sizeMatch  = hasSizes ? v.size === selectedSize : true;
+      return colorMatch && sizeMatch;
+    }) || null;
+  }
+
+  function updateAddBtn() {
+    const addBtn = $("modalAddBtn");
+    if (!addBtn) return;
+    const variant = getMatchingVariant();
+    const colorSelected = selectedColor !== null;
+    const sizeSelected  = hasSizes ? selectedSize !== null : true;
+
+    if (colorSelected && sizeSelected && variant) {
+      if (variant.stock === 0) {
+        addBtn.disabled = true;
+        addBtn.textContent = "Rupture de stock";
+      } else {
+        addBtn.disabled = false;
+        addBtn.textContent = "Ajouter au panier";
+        addBtn.onclick = () => {
+          addToCart({ ...product, selectedVariant: variant });
+          closeModal();
+        };
+      }
+    } else {
+      addBtn.disabled = true;
+      addBtn.textContent = "Ajouter au panier";
+    }
+  }
+
+  // HTML couleurs
+  const colorsHTML = `
+    <div class="variant-group">
+      <p class="variant-label">Couleur</p>
+      <div class="variant-options">
+        ${colors.map((color) => `
+          <button class="variant-btn color-btn" data-color="${color}">${color}</button>
+        `).join("")}
+      </div>
+    </div>
+  `;
+
+  // HTML tailles
+  const sizesHTML = hasSizes ? `
+    <div class="variant-group">
+      <p class="variant-label">Taille</p>
+      <div class="variant-options">
+        ${sizes.map((size) => `
+          <button class="variant-btn size-btn" data-size="${size}">${size}</button>
+        `).join("")}
+      </div>
+    </div>
+  ` : "";
+
+  container.innerHTML = colorsHTML + sizesHTML;
+
+  // Events couleurs
+  container.querySelectorAll(".color-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      container.querySelectorAll(".color-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      selectedColor = btn.dataset.color;
+      // Griser les tailles sans stock pour cette couleur
+      if (hasSizes) {
+        container.querySelectorAll(".size-btn").forEach((sb) => {
+          const variant = variants.find((v) => v.color === selectedColor && v.size === sb.dataset.size);
+          sb.disabled = variant ? variant.stock === 0 : true;
+          sb.classList.toggle("out-of-stock", sb.disabled);
+        });
+      }
+      updateAddBtn();
+    });
+  });
+
+  // Events tailles
+  container.querySelectorAll(".size-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (btn.disabled) return;
+      container.querySelectorAll(".size-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      selectedSize = btn.dataset.size;
+      updateAddBtn();
+    });
+  });
+}
 // ─────────────────────────────────────────────
 // 20. KEYBOARD
 // ─────────────────────────────────────────────
