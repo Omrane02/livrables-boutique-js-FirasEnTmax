@@ -8,6 +8,7 @@ const cartRouter = require('./router/cart');
 const ordersRouter = require('./router/orders');
 const favoritesRouter = require('./router/favorites');
 const addressesRouter = require('./router/addresses');
+const promotionsRouter = require('./router/promotions');
 
 const db = require('./database/db');
 
@@ -29,22 +30,7 @@ app.use('/api/cart', cartRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/favorites', favoritesRouter);
 app.use('/api/addresses', addressesRouter);
-
-// TEST DB (TEMPORAIRE)
-const testDB = async () => {
-    try {
-        const [rows] = await db.query('SELECT * FROM products');
-        console.log('Produits récupérés ✅', rows.length, 'produits trouvés');
-    } catch (err) {
-        console.error('Erreur SQL ❌', err.message);
-    }
-};
-testDB();
-
-// Route test
-app.get('/', (req, res) => {
-    res.send('API Tennis Store 🎾');
-});
+app.use('/api/promotions', promotionsRouter);
 
 // Lancement serveur
 app.listen(PORT, () => {

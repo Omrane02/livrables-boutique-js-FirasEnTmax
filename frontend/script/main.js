@@ -1,5 +1,3 @@
-
-
 "use strict";
 
 // ─────────────────────────────────────────────
@@ -99,6 +97,7 @@ const STATIC_PRODUCTS = [
 
 const state = {
   products: [],
+  promotions: [],
   cart: [],
   currentUser: null,
   filter: { category: "all", gender: "all", brand: "all", maxPrice: 300, search: "", sort: "default" },
@@ -142,7 +141,7 @@ window.addEventListener("load", () => {
   });
   if (getToken()) {
     apiFetch("/auth/profile")
-      .then((user) => { state.currentUser = user; updateAuthUI(); return syncCartFromAPI(); })
+      .then((user) => { state.currentUser = user; updateAuthUI(); })
       .catch(() => removeToken());
   }
 });
@@ -157,6 +156,16 @@ async function loadProducts() {
   } catch (e) {
     console.warn("⚠ Fallback :", e.message);
     state.products = STATIC_PRODUCTS;
+  }
+
+  // Charger les promotions actives
+  try {
+    const promos = await apiFetch("/promotions");
+    state.promotions = Array.isArray(promos) ? promos : [];
+    console.log("✅ Promotions chargées :", state.promotions.length);
+  } catch (e) {
+    console.warn("⚠ Promotions non chargées :", e.message);
+    state.promotions = [];
   }
 }
 
@@ -251,11 +260,9 @@ function injectAuthModal() {
     </div>
   `);
 
-  // Close
   $("authModalClose").addEventListener("click", closeAuthModal);
   $("authModal").addEventListener("click", (e) => { if (e.target === $("authModal")) closeAuthModal(); });
 
-  // Tabs
   document.querySelectorAll(".auth-tab").forEach((tab) => {
     tab.addEventListener("click", () => {
       document.querySelectorAll(".auth-tab").forEach((t) => t.classList.remove("active"));
@@ -264,7 +271,6 @@ function injectAuthModal() {
     });
   });
 
-  // Show/hide password
   document.querySelectorAll(".auth-eye").forEach((btn) => {
     btn.addEventListener("click", () => {
       const input = $(btn.dataset.target);
@@ -273,7 +279,6 @@ function injectAuthModal() {
     });
   });
 
-  // Password strength
   $("registerPassword").addEventListener("input", () => {
     const val = $("registerPassword").value;
     const strength = getPasswordStrength(val);
@@ -287,14 +292,11 @@ function injectAuthModal() {
     label.style.color = colors[strength];
   });
 
-  // LOGIN
   $("loginSubmit").addEventListener("click", async () => {
     const email    = $("loginEmail").value.trim();
     const password = $("loginPassword").value;
     $("loginError").textContent = "";
-
     if (!email || !password) { $("loginError").textContent = "Veuillez remplir tous les champs."; return; }
-
     setSubmitting("loginSubmit", true);
     try {
       const data = await apiFetch("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
@@ -302,14 +304,12 @@ function injectAuthModal() {
       state.currentUser = data.user || { email };
       closeAuthModal();
       updateAuthUI();
-      await syncCartFromAPI();
       showToast(`✓ Bonjour ${data.user?.first_name || ""} !`);
     } catch (e) {
       $("loginError").textContent = e.message || "Email ou mot de passe incorrect.";
     } finally { setSubmitting("loginSubmit", false); }
   });
 
-  // REGISTER
   $("registerSubmit").addEventListener("click", async () => {
     const first_name = $("registerFirstName").value.trim();
     const last_name  = $("registerLastName").value.trim();
@@ -318,8 +318,6 @@ function injectAuthModal() {
     const password   = $("registerPassword").value;
     const confirm    = $("registerConfirm").value;
     $("registerError").textContent = "";
-
-    // Validation
     if (!first_name || !last_name || !email || !password) {
       $("registerError").textContent = "Veuillez remplir tous les champs obligatoires."; return;
     }
@@ -329,14 +327,12 @@ function injectAuthModal() {
     if (password.length < 6) {
       $("registerError").textContent = "Le mot de passe doit contenir au moins 6 caractères."; return;
     }
-
     setSubmitting("registerSubmit", true);
     try {
       await apiFetch("/auth/register", {
         method: "POST",
         body: JSON.stringify({ first_name, last_name, email, password, phone: phone || null }),
       });
-      // Auto-login after register
       const loginData = await apiFetch("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
       setToken(loginData.token);
       state.currentUser = loginData.user || { email, first_name, last_name };
@@ -348,7 +344,6 @@ function injectAuthModal() {
     } finally { setSubmitting("registerSubmit", false); }
   });
 
-  // Enter key support
   ["loginEmail", "loginPassword"].forEach((id) => {
     $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") $("loginSubmit").click(); });
   });
@@ -376,7 +371,6 @@ function setSubmitting(btnId, loading) {
 function openAuthModal(mode = "login") {
   injectAuthModal();
   showAuthForm(mode);
-  // Sync tab highlight
   document.querySelectorAll(".auth-tab").forEach((t) => {
     t.classList.toggle("active", t.dataset.tab === mode);
   });
@@ -427,44 +421,36 @@ function updateAuthUI() {
 // 9. CART
 // ─────────────────────────────────────────────
 
-async function syncCartFromAPI() {
-  if (!getToken()) return;
-  try {
-    const items = await apiFetch("/cart");
-    if (!Array.isArray(items)) return;
-    state.cart = items.map((item) => {
-      const product = state.products.find((p) => p.id === item.product_id) || {
-        id: item.product_id, name: item.product_name || item.name,
-        price: parseFloat(item.price), brand_id: item.brand_id,
-        category_id: item.category_id, gender: item.gender || "unisex",
-      };
-      return { product, qty: item.quantity, cartItemId: item.id };
-    });
-    renderCart();
-  } catch (e) { console.warn("Cart sync error:", e.message); }
-}
-
-async function addToCart(product) {
+function addToCart(product) {
   const existing = state.cart.find((i) => i.product.id === product.id);
   if (existing) existing.qty += 1; else state.cart.push({ product, qty: 1 });
+  // Sauvegarder dans localStorage
+  localStorage.setItem("cart", JSON.stringify(state.cart));
   renderCart();
   showToast(`✓ ${product.name.split(" ").slice(0, 3).join(" ")}… ajouté`);
-  if (getToken()) {
-    try { await apiFetch("/cart", { method: "POST", body: JSON.stringify({ product_id: product.id, quantity: 1 }) }); await syncCartFromAPI(); }
-    catch (e) { console.warn("Cart API error:", e.message); }
-  }
 }
-async function removeFromCart(productId) {
-  const item = state.cart.find((i) => i.product.id === productId);
-  state.cart = state.cart.filter((i) => i.product.id !== productId); renderCart();
-  if (getToken() && item?.cartItemId) { try { await apiFetch(`/cart/${item.cartItemId}`, { method: "DELETE" }); } catch (e) { console.warn(e.message); } }
+
+function removeFromCart(productId) {
+  state.cart = state.cart.filter((i) => i.product.id !== productId);
+  localStorage.setItem("cart", JSON.stringify(state.cart));
+  renderCart();
 }
-async function updateQty(productId, delta) {
+
+function updateQty(productId, delta) {
   const item = state.cart.find((i) => i.product.id === productId); if (!item) return;
   item.qty += delta;
-  if (item.qty <= 0) { await removeFromCart(productId); return; }
+  if (item.qty <= 0) { removeFromCart(productId); return; }
+  localStorage.setItem("cart", JSON.stringify(state.cart));
   renderCart();
-  if (getToken() && item.cartItemId) { try { await apiFetch(`/cart/${item.cartItemId}`, { method: "PUT", body: JSON.stringify({ quantity: item.qty }) }); } catch (e) { console.warn(e.message); } }
+}
+
+function loadCartFromStorage() {
+  try {
+    const saved = localStorage.getItem("cart");
+    state.cart = saved ? JSON.parse(saved) : [];
+  } catch (e) {
+    state.cart = [];
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -475,11 +461,12 @@ async function checkout() {
   if (!getToken()) { showToast("⚠ Connectez-vous pour commander."); openAuthModal("login"); return; }
   if (state.cart.length === 0) return;
   try {
-    const orderItems = state.cart.map((i) => ({ product_id: i.product.id, quantity: i.qty, price: i.product.price }));
-    const total = state.cart.reduce((acc, i) => acc + i.product.price * i.qty, 0);
-    await apiFetch("/orders", { method: "POST", body: JSON.stringify({ items: orderItems, total }) });
-    await apiFetch("/cart/clear", { method: "DELETE" });
-    state.cart = []; renderCart(); closeCart();
+    const items = state.cart.map((i) => ({ product_variant_id: i.product.id, quantity: i.qty }));
+    await apiFetch("/orders", { method: "POST", body: JSON.stringify({ items }) });
+    state.cart = [];
+    localStorage.removeItem("cart");
+    renderCart();
+    closeCart();
     showToast("✓ Commande passée avec succès ! 🎾");
   } catch (e) { showToast("Erreur : " + e.message); }
 }
@@ -555,6 +542,14 @@ function buildProductCard(product, index) {
   const catName     = CATEGORIES[product.category_id] || product.category || "";
   const genderLabel = { homme: "Homme", femme: "Femme", unisex: "Unisex" }[product.gender] || "";
 
+  // Promotion
+  const promo = getPromoForProduct(product.id);
+  const priceHTML = promo
+    ? `<span class="product-price promo-price">${formatPrice(promo.discounted_price)}</span>
+       <span class="product-price-old">${formatPrice(product.price)}</span>
+       <span class="product-promo-badge">-${promo.discount_percent}%</span>`
+    : `<span class="product-price">${formatPrice(product.price)}</span>`;
+
   const imgHTML = imgUrl
     ? `<img src="${imgUrl}" alt="${product.name}" class="product-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="product-img-fallback" style="display:none">🎾</div>`
     : `<div class="product-img-fallback">🎾</div>`;
@@ -565,7 +560,7 @@ function buildProductCard(product, index) {
       <p class="product-brand">${brandName}</p>
       <h3 class="product-name">${product.name}</h3>
       <div class="product-footer">
-        <span class="product-price">${formatPrice(product.price)}</span>
+        <div class="product-price-wrap">${priceHTML}</div>
         <span class="product-gender">${genderLabel}</span>
       </div>
     </div>
@@ -609,12 +604,22 @@ function openModal(product) {
     carouselHTML = `<div class="modal-img">🎾</div>`;
   }
 
+  // Promotion dans la modal
+  const promo = getPromoForProduct(product.id);
+  const modalPriceHTML = promo
+    ? `<div class="modal-price-wrap">
+         <span class="modal-price promo-price">${formatPrice(promo.discounted_price)}</span>
+         <span class="modal-price-old">${formatPrice(product.price)}</span>
+         <span class="modal-promo-badge">-${promo.discount_percent}%</span>
+       </div>`
+    : `<p class="modal-price">${formatPrice(product.price)}</p>`;
+
   modalBody.innerHTML = `
     ${carouselHTML}
     <div class="modal-details">
       <p class="modal-brand">${brandName}</p>
       <h2 class="modal-name">${product.name}</h2>
-      <p class="modal-price">${formatPrice(product.price)}</p>
+      ${modalPriceHTML}
       <p class="modal-desc">${product.description}</p>
       <div class="modal-meta"><span class="meta-tag">${catName}</span><span class="meta-tag">${genderLabel}</span></div>
       <button class="modal-add" data-id="${product.id}">Ajouter au panier</button>
@@ -726,6 +731,10 @@ function formatPrice(value) {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(value);
 }
 
+function getPromoForProduct(productId) {
+  return state.promotions.find((promo) => promo.product_id === productId) || null;
+}
+
 // ─────────────────────────────────────────────
 // 20. KEYBOARD
 // ─────────────────────────────────────────────
@@ -740,3 +749,7 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight") { const btn = $("carouselNext"); if (btn) btn.click(); }
   }
 });
+
+// Charger le panier depuis localStorage au démarrage
+loadCartFromStorage();
+renderCart();
