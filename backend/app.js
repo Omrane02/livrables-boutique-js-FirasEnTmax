@@ -32,22 +32,6 @@ app.use('/api/favorites', favoritesRouter);
 app.use('/api/addresses', addressesRouter);
 app.use('/api/promotions', promotionsRouter);
 
-// TEST DB (TEMPORAIRE)
-const testDB = async () => {
-    try {
-        const [rows] = await db.query('SELECT * FROM products');
-        console.log('Produits récupérés ✅', rows.length, 'produits trouvés');
-    } catch (err) {
-        console.error('Erreur SQL ❌', err.message);
-    }
-};
-testDB();
-
-// Route test
-app.get('/', (req, res) => {
-    res.send('API Tennis Store 🎾');
-});
-
 // Lancement serveur
 app.listen(PORT, () => {
     console.log(`Serveur lancé sur http://localhost:${PORT}`);
