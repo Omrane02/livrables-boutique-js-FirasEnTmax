@@ -8,6 +8,7 @@ const cartRouter = require('./router/cart');
 const ordersRouter = require('./router/orders');
 const favoritesRouter = require('./router/favorites');
 const addressesRouter = require('./router/addresses');
+const promotionsRouter = require('./router/promotions');
 
 const db = require('./database/db');
 
@@ -29,6 +30,7 @@ app.use('/api/cart', cartRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/favorites', favoritesRouter);
 app.use('/api/addresses', addressesRouter);
+app.use('/api/promotions', promotionsRouter);
 
 // TEST DB (TEMPORAIRE)
 const testDB = async () => {

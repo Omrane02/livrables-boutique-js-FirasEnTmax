@@ -1325,3 +1325,54 @@ body.cursor-hover .cursor-follower { display: none; }
 .auth-error { color: #e05a5a; font-size: 0.82rem; min-height: 1.1rem; margin-bottom: 0.5rem; }
 .auth-switch { text-align: center; font-size: 0.82rem; margin-top: 1.1rem; opacity: 0.65; }
 .auth-switch a { color: inherit; text-decoration: underline; }
+
+/* Prix barré */
+.product-price-old {
+  text-decoration: line-through;
+  color: var(--text-muted, #999);
+  font-size: 0.85em;
+  margin-left: 6px;
+}
+
+.promo-price {
+  color: #e05a5a;
+}
+
+.product-promo-badge {
+  background: #e05a5a;
+  color: #fff;
+  font-size: 0.75em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+.product-price-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Modal */
+.modal-price-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.modal-price-old {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 0.9em;
+}
+
+.modal-promo-badge {
+  background: #e05a5a;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
