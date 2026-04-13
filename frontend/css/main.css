@@ -1002,7 +1002,7 @@ body.cursor-hover .cursor-follower { display: none; }
 }
 .auth-field label {
   font-size: 0.72rem; letter-spacing: 0.08em;
-  text-transform: uppercase; color: rgba(255,255,255,0.5);
+  text-transform: uppercase; color: rgb(230, 223, 223);
 }
 .auth-optional { font-size: 0.65rem; opacity: 0.6; text-transform: none; }
 
@@ -1018,7 +1018,7 @@ body.cursor-hover .cursor-follower { display: none; }
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 8px;
-  color: #fff;
+  color: #ffffff !important;
   font-family: inherit;
   font-size: 0.9rem;
   padding: 0.7rem 0.9rem;
@@ -1032,6 +1032,10 @@ body.cursor-hover .cursor-follower { display: none; }
   background: rgba(255,255,255,0.09);
 }
 .auth-field input::placeholder { color: rgba(255,255,255,0.2); }
+.auth-field input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px rgba(255,255,255,0.06) inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
 
 /* Password strength */
 .auth-password-strength {
